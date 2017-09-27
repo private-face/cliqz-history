@@ -1,0 +1,12 @@
+{{#unless isSingleVisit}}
+	<button {{action "toggleCollapsedState"}} class="toggle-collapse">
+		{{#if collapsed}}
+		▶
+		{{else}}
+		▼
+		{{/if}}
+	</button>
+{{/unless}}
+{{#each visits as |visit|}}
+	{{history-visit model=visit collapsed=collapsed onDelete=onDelete}}
+{{/each}}
