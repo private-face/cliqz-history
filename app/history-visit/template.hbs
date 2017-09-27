@@ -7,8 +7,7 @@
   <span {{action 'sendTelemetry' 'logo'}}>
     {{cliqz-logo model=model.contact.logo tagName="span" class=logoclass}}
   </span>
-  {{#if logoclass}}
-    <div>
+    <div class="domain-container">
       <span class="domain" {{action 'sendTelemetry' 'header_url'}}>
         {{#if isCliqz}}
           Cliqz
@@ -17,7 +16,6 @@
         {{/if}}
       </span>
     </div>
-  {{/if}}
 
   <div class="visit-content">
     <span class="title">

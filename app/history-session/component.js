@@ -16,6 +16,15 @@ export default Ember.Component.extend({
     return visits.slice(1, visits.length);
   }),
 
+  clusters: Ember.computed('visits', function() {
+    return this.get('visits').reduce((res, v, i) => {
+      const lastCluster = i % 2 === 0 ? [] : res.pop();
+      lastCluster.push(v);
+      res.push(lastCluster);
+      return res;
+    }, []);
+  }),
+
   ongoingVisits: Ember.computed.filter('visits', function (visit) {
     return typeof visit.get('tabIndex') === "number";
   }),

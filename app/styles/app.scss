@@ -448,6 +448,14 @@ $color-active-border: #0078CA;
             text-decoration: none;
             line-height: 22px;
 
+            &.collapsed {
+              display:none;
+            }
+
+            &.visit:nth-of-type(1).collapsed {
+              display: block;
+            }
+
             &:hover {
               background-color: #F7F7F7;
 
@@ -495,13 +503,6 @@ $color-active-border: #0078CA;
               width: 22px;
               margin-left: 22px;
               font-size: 12px;
-
-              &.big {
-                margin-left: 0px;
-                height: 44px;
-                width: 44px;
-                font-size: 24px;
-              }
             }
 
             .keyword {
@@ -597,6 +598,36 @@ $color-active-border: #0078CA;
               .visit-content span {
                 color: #000;
               }
+            }
+          }
+
+          .domain-container {
+            display: none;
+          }
+
+          .cluster {
+            position: relative;
+
+            .toggle-collapse {
+              border: 0;
+              background: 0;
+              position: absolute;
+              left: -5px;
+              top: 10px;
+              z-index: 999999;
+            }
+          }
+
+          .cluster:first-child .visit:nth-of-type(1) {
+            .domain-container {
+              display: block;
+            }
+
+            .logo {
+              margin-left: 0px;
+              height: 44px;
+              width: 44px;
+              font-size: 24px;
             }
           }
         }

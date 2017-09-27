@@ -22,7 +22,7 @@ export default Ember.Component.extend({
 
   cliqz: Ember.inject.service(),
   classNames: ['visit'],
-  classNameBindings: ['isMarkedForDeletion:marked-for-deletion'],
+  classNameBindings: ['isMarkedForDeletion:marked-for-deletion', 'collapsed:collapsed'],
 
   href: Ember.computed.alias('model.url'),
   title: Ember.computed.alias('model.title'),
@@ -61,9 +61,6 @@ export default Ember.Component.extend({
 
   setup: function() {
     this.set("isMarkedForDeletion", false);
-    if (this.$()) {
-      this.$().css('display', 'block');
-    }
   }.on('didUpdateAttrs'),
 
   actions: {
@@ -87,9 +84,9 @@ export default Ember.Component.extend({
     },
     deleteVisit() {
       const model = this.get('model');
-      this.$().fadeOut(function () {
+      this.$().fadeOut(() => {
         this.get('onDelete')(model);
-      }.bind(this));
+      });
     },
     markForDeletion() {
       this.set("isMarkedForDeletion", true);
