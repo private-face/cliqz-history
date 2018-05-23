@@ -62,6 +62,10 @@ export default Ember.Service.extend({
         this.get('historySync').updateHistoryUrls(message.message.urls);
       }
 
+      if (message.action === 'deleteSite') {
+        this.get('historySync').deleteSite(message.message.topUrl)
+      }
+
       if (message.type === "response") {
         const spananMessage = {
           uuid: message.requestId,

@@ -9,7 +9,6 @@ export default Ember.Service.extend({
 
   setup: function () {
     this.set('isRunning', false);
-    this.set('urlsToDelete', []);
   }.on('init'),
 
   stop() {
@@ -248,15 +247,7 @@ export default Ember.Service.extend({
   updateHistoryUrls(deletedUrls) {
     const store = this.get('store');
     const visits = store.peekAll('history-message');
-    const urlsToDelete = this.get('urlsToDelete');
-    const urls = [];
-    deletedUrls.forEach(deletedUrl => {
-      if (urlsToDelete.includes(deletedUrl)) {
-        urlsToDelete.removeObject(deletedUrl);
-      } else {
-        urls.push(deletedUrl);
-      }
-    });
+    const urls = [...deletedUrls];
     visits.toArray().forEach(visit => {
       if(urls.indexOf(visit.get('url')) >= 0) {
         const isLastChild = visit.get('session.visits.length') === 1;
@@ -268,26 +259,58 @@ export default Ember.Service.extend({
         }
       }
     });
-    this.set('urlsToDelete', []);
   },
 
-  deleteVisit(visitId) {
+  deleteSite(topUrl) {
+    console.log('>>>>> history:deleteCluster', topUrl);
     const store = this.get('store');
+    const visits = store.peekAll('history-message');
     const cliqz = this.get('cliqz');
-    const visit = store.peekRecord('history-message', visitId);
-    const session = visit.get('session.content');
-    this.get('urlsToDelete').addObject(visit.get('url'));
-    visit.unloadRecord();
-    if (session.get('isEmpty')) {
-      session.unloadRecord();
-    }
+    // get all visites with cluster they belong to
+    const visitIds = visits.toArray().reduce((visitesToDelete, visit) => {
+      if (visit.get('url') === topUrl) {
+        const clusters = visit.get('session.clusters');
+        clusters.forEach(cluster => {
+          const mainVisit = cluster[cluster.length - 1];
+          if (mainVisit.get('url') === topUrl) {
+            visitesToDelete.push(...cluster.map(v => v.get("id")));
+          }
+        });
+      }
+      return visitesToDelete;
+    }, []);
+    console.log('>>>>>>> visit ids', visitIds);
     cliqz.sendTelemetry({
       type: 'history',
       view: 'sections',
       action: 'click',
       target: 'delete_site'
     });
-    cliqz.deleteVisit(visitId);
+    this.deleteVisits(visitIds);
+  },
+
+  deleteVisit(visitId) {
+    this.get('cliqz').sendTelemetry({
+      type: 'history',
+      view: 'sections',
+      action: 'click',
+      target: 'delete_visit'
+    });
+    this.deleteVisits([visitId]);
+  },
+
+  deleteVisits(visitIds) {
+    const store = this.get('store');
+    const cliqz = this.get('cliqz');
+    visitIds.forEach((visitId) => {
+      const visit = store.peekRecord('history-message', visitId);
+      const session = visit.get('session.content');
+      visit.unloadRecord();
+      if (session.get('isEmpty')) {
+        session.unloadRecord();
+      }
+    });
+    cliqz.deleteVisits(visitIds);
   },
 
   deleteSession(sessionId) {
@@ -295,8 +318,6 @@ export default Ember.Service.extend({
     const cliqz = this.get('cliqz');
     const session = store.peekRecord('session', sessionId);
     const visitIds = session.get('visits').mapBy('id');
-    const visitUrls = session.get('visits').mapBy('url');
-    this.get('urlsToDelete').addObjects(visitUrls);
     session.unloadRecord();
     cliqz.sendTelemetry({
       type: 'history',

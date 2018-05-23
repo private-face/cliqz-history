@@ -91,6 +91,7 @@ export default Ember.Component.extend({
       this.set('isOtherTelemetrySignalSent', false);
     },
     deleteVisit() {
+      console.log('>>>>> visit:deleteVisit');
       const model = this.get('model');
       this.$().fadeOut(() => {
         this.get('onDelete')(model);
