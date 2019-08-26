@@ -1,16 +1,19 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { inject } from '@ember/service';
+import { gt } from '@ember/object/computed';
+import { debounce } from '@ember/runloop';
 
-export default Ember.Component.extend({
-  cliqz: Ember.inject.service(),
+export default Component.extend({
+  cliqz: inject(),
   tagName: 'from',
   classNames: ['search'],
 
   classNameBindings: ['hasQuery:is-active'],
 
-  hasQuery: Ember.computed.gt('model.length', 0),
+  hasQuery: gt('model.length', 0),
 
   modelObserver: function() {
-    Ember.run.debounce(() => {
+    debounce(() => {
       this.set('model', this.get('modelProxy'));
       if(this.get('isReadyToSendTelemetry')) {
         this.actions.sendTelemetry.call(this);

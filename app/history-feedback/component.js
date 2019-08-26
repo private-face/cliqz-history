@@ -1,4 +1,9 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { inject } from '@ember/service';
+import { equal } from '@ember/object/computed';
+import { computed } from '@ember/object';
+import { next } from '@ember/runloop';
+import { later } from '@ember/runloop';
 
 const storage = {
   getItem(key) {
@@ -18,14 +23,14 @@ const storage = {
   }
 };
 
-export default Ember.Component.extend({
-  history: Ember.inject.service('history-sync'),
+export default Component.extend({
+  history: inject('history-sync'),
 
-  feedbackStep1: Ember.computed.equal('currentFeedbackStep', 1), // Show thumb up/down vote buttons
-  feedbackStep2: Ember.computed.equal('currentFeedbackStep', 2), // Show textarea for comments
-  feedbackStep3: Ember.computed.equal('currentFeedbackStep', 3), // Show 'thank you' message
-  feedbackStep4: Ember.computed.equal('currentFeedbackStep', 4), // Show textarea for more comments
-  closeButtonVisibility: Ember.computed('currentFeedbackStep', function() {
+  feedbackStep1: equal('currentFeedbackStep', 1), // Show thumb up/down vote buttons
+  feedbackStep2: equal('currentFeedbackStep', 2), // Show textarea for comments
+  feedbackStep3: equal('currentFeedbackStep', 3), // Show 'thank you' message
+  feedbackStep4: equal('currentFeedbackStep', 4), // Show textarea for more comments
+  closeButtonVisibility: computed('currentFeedbackStep', function() {
     if (this.get('currentFeedbackStep') > 0) {
       return "visible";
     } else {
@@ -46,7 +51,7 @@ export default Ember.Component.extend({
     if ([2,4].indexOf(this.get('currentFeedbackStep')) === -1) {
       return;
     }
-    Ember.run.next(() => {
+    next(() => {
       this.$('textarea').focus();
     })
   }.observes('currentFeedbackStep'),
@@ -85,7 +90,7 @@ export default Ember.Component.extend({
       }
       this.set('comments', '');
       this.set('currentFeedbackStep', 3);
-      Ember.run.later(() => {
+      later(() => {
         this.set('currentFeedbackStep', 0);
       }, 2000);
     },
@@ -98,7 +103,7 @@ export default Ember.Component.extend({
       }
       this.set('moreComments', '');
       this.set('currentFeedbackStep', 3);
-      Ember.run.later(() => {
+      later(() => {
         this.set('currentFeedbackStep', 0);
       }, 2000);
     },

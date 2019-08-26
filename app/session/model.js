@@ -1,6 +1,8 @@
-import Ember from 'ember';
 import DS from 'ember-data';
 import { hasMany } from 'ember-data/relationships';
+import { sort } from '@ember/object/computed';
+import { alias } from '@ember/object/computed';
+import { computed } from '@ember/object';
 
 export default DS.Model.extend({
 
@@ -8,21 +10,21 @@ export default DS.Model.extend({
 
   visitsSorting: ['lastVisitedAt:asc'],
 
-  sortedVisits: Ember.computed.sort('visits', 'visitsSorting'),
+  sortedVisits: sort('visits', 'visitsSorting'),
 
-  firstVisit: Ember.computed.alias('sortedVisits.firstObject'),
-  lastVisit: Ember.computed.alias('sortedVisits.lastObject'),
+  firstVisit: alias('sortedVisits.firstObject'),
+  lastVisit: alias('sortedVisits.lastObject'),
 
-  isEmpty: Ember.computed('visits', 'firstVisit.isCliqz', function() {
+  isEmpty: computed('visits', 'firstVisit.isCliqz', function() {
     return this.get('visits.length') === 0 ||
       (this.get('visits.length') === 1 && this.get('firstVisit.isCliqz'));
   }),
 
-  logo: Ember.computed.alias('firstVisit.contact.logo'),
+  logo: alias('firstVisit.contact.logo'),
 
-  domain: Ember.computed.alias('firstVisit.contact.domain'),
+  domain: alias('firstVisit.contact.domain'),
 
-  lastVisitedAt: Ember.computed.alias('lastVisit.lastVisitedAt'),
+  lastVisitedAt: alias('lastVisit.lastVisitedAt'),
 
 
 });

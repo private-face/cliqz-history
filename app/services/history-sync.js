@@ -1,10 +1,11 @@
 /* global chrome */
+import Service from '@ember/service';
+import { inject } from '@ember/service';
+import { later } from '@ember/runloop';
 
-import Ember from 'ember';
-
-export default Ember.Service.extend({
-  cliqz: Ember.inject.service(),
-  store: Ember.inject.service(),
+export default Service.extend({
+  cliqz: inject(),
+  store: inject(),
 
   limit: 100,
   latestFrameStartsAt: Infinity,
@@ -28,7 +29,7 @@ export default Ember.Service.extend({
         frameEndsAt: endsAt,
       }).then(() => {
         if (this.get('isRunning')) {
-          Ember.run.later(null, more, endsAt, 1000);
+          later(null, more, endsAt, 1000);
         }
       });
     }.bind(this);
@@ -39,7 +40,7 @@ export default Ember.Service.extend({
       limit: this.get('limit'),
       frameEndsAt: startAt,
     }).then(
-      ({history}) => Ember.run.later(null, more, history.frameEndsAt, 1000)
+      ({history}) => later(null, more, history.frameEndsAt, 1000)
     );
   },
 

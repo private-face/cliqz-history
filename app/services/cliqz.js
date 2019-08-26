@@ -1,6 +1,6 @@
 /* global browser, Proxy */
-
-import Ember from 'ember';
+import Service from '@ember/service';
+import { inject } from '@ember/service';
 
 function createActionWrapperForModule(module) {
   const actionHandler = (action, ...args) => browser.runtime.sendMessage({
@@ -23,8 +23,8 @@ function createActionWrapperForModule(module) {
   });
 }
 
-export default Ember.Service.extend({
-  historySync: Ember.inject.service('history-sync'),
+export default Service.extend({
+  historySync: inject('history-sync'),
 
   init() {
     this._super(...arguments);

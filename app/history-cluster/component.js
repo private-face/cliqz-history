@@ -1,15 +1,17 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { computed } from '@ember/object';
+import { inject } from '@ember/service';
 
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: 'article',
   classNames: ['cluster'],
-  cliqz: Ember.inject.service('cliqz'),
+  cliqz: inject('cliqz'),
 
-  mainVisit: Ember.computed('visits', function() {
+  mainVisit: computed('visits', function() {
     return this.get('visits').filter(visit => visit.get('isMain'))[0];
   }),
 
-  isSingleVisit: Ember.computed.equal('visits.length', 1),
+  isSingleVisit: computed.equal('visits.length', 1),
 
   actions: {
     deleteCluster: function () {

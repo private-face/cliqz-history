@@ -1,4 +1,8 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { inject } from '@ember/service';
+import { alias } from '@ember/object/computed';
+import { or } from '@ember/object/computed';
+import { computed } from '@ember/object';
 
 const getDetails = url => {
   const a = document.createElement('a');
@@ -15,22 +19,22 @@ const isGoogle = hostname => {
   return /^(www\.)?google(\.[a-z]{2,3}){1,2}$/i.test(hostname);
 };
 
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: 'a',
 
   attributeBindings: ['href', 'title'],
 
-  cliqz: Ember.inject.service(),
+  cliqz: inject(),
   classNames: ['visit'],
   classNameBindings: ['isMarkedForDeletion:marked-for-deletion', 'isMain:cluster-head'],
 
-  href: Ember.computed.alias('model.url'),
-  title: Ember.computed.alias('model.title'),
-  isCliqz: Ember.computed.alias('model.isCliqz'),
-  isMain: Ember.computed.alias('model.isMain'),
-  visibleTitle: Ember.computed.or('title', 'href'),
+  href: alias('model.url'),
+  title: alias('model.title'),
+  isCliqz: alias('model.isCliqz'),
+  isMain: alias('model.isMain'),
+  visibleTitle: or('title', 'href'),
 
-  keyword: Ember.computed('model.url', function () {
+  keyword: computed('model.url', function () {
     const url = this.get('model.url');
     const details = getDetails(url);
 

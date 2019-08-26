@@ -1,4 +1,6 @@
 import Ember from 'ember';
+import { htmlSafe } from '@ember/template';
+import { helper as buildHelper } from '@ember/component/helper';
 
 function toRegexp(text) {
   const escapedText = text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
@@ -15,7 +17,7 @@ export function highlight([text, em]) {
   const highlighted = safeText.replace(re, function (match) {
     return `<em>${match}</em>`;
   });
-  return Ember.String.htmlSafe(highlighted)
+  return htmlSafe(highlighted);
 }
 
-export default Ember.Helper.helper(highlight);
+export default buildHelper(highlight);

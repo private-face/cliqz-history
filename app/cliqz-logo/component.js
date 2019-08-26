@@ -1,13 +1,15 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { computed } from '@ember/object';
+import { htmlSafe } from '@ember/template';
 
-export default Ember.Component.extend({
+export default Component.extend({
   classNames: ['logo'],
 
   attributeBindings: ['style', 'extra'],
 
-  style: Ember.computed('model.style', function () {
+  style: computed('model.style', function () {
     const style = this.get('model.style');
-    return Ember.String.htmlSafe(style);
+    return htmlSafe(style);
   }),
 
   extra: 'logo',

@@ -1,12 +1,15 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { sort } from '@ember/object/computed';
+import { filterBy } from '@ember/object/computed';
+import { once } from '@ember/runloop';
 
-export default Ember.Component.extend({
+export default Component.extend({
   tagName: 'ul',
   classNames: ['session-list'],
 
   sessionsSorting: ['lastVisitedAt:desc'],
-  sortedSessions: Ember.computed.sort('model', 'sessionsSorting'),
-  sessions: Ember.computed.filterBy('sortedSessions', 'isDeleted', false),
+  sortedSessions: sort('model', 'sessionsSorting'),
+  sessions: filterBy('sortedSessions', 'isDeleted', false),
 
   setScrollEvent: function () {
     this.__scroll = this.scroll.bind(this);
@@ -19,13 +22,13 @@ export default Ember.Component.extend({
 
   scroll: function () {
     if ((this.element.scrollTop + 200) >= this.element.scrollTopMax) {
-      Ember.run.once(this, this.loadMore);
+      once(this, this.loadMore);
     }
   },
 
   autoLoadMore: function () {
     if (this.get('model.hasMoreResults') && (this.element.scrollTopMax === 0)) {
-      Ember.run.once(this, this.loadMore);
+      once(this, this.loadMore);
     }
   }.observes('model.content.length', 'model.hasMoreResults'),
 

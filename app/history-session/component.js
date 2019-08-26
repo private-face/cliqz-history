@@ -1,4 +1,11 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { inject } from '@ember/service';
+import { sort } from '@ember/object/computed';
+import { alias } from '@ember/object/computed';
+import { computed } from '@ember/object';
+import { filter } from '@ember/object/computed';
+import { gt } from '@ember/object/computed';
+import { equal } from '@ember/object/computed';
 
 function getQuery(url) {
   try {
@@ -37,23 +44,23 @@ function lookAlike(visit1, visit2) {
   return url1 === url2 || visit1.get('isCliqz') && keyword1 === url2;
 }
 
-export default Ember.Component.extend({
+export default Component.extend({
   classNameBindings: ['query:is-active', 'hasOngoingVisits:has-ongoing-visits',
     'isMarkedForDeletion:marked-for-deletion'],
 
-  history: Ember.inject.service('history-sync'),
+  history: inject('history-sync'),
 
   visitsSorting: ['lastVisitedAt:asc'],
-  visits: Ember.computed.sort('model.visits', 'visitsSorting'),
+  visits: sort('model.visits', 'visitsSorting'),
 
-  entryVisit: Ember.computed.alias('visits.firstObject'),
+  entryVisit: alias('visits.firstObject'),
 
-  sortedVisits: Ember.computed('visits', function () {
+  sortedVisits: computed('visits', function () {
     const visits = this.get('visits');
     return visits.slice(1, visits.length);
   }),
 
-  clusters: Ember.computed('visits', function() {
+  clusters: computed('visits', function() {
     let lastNumberOfClusters = 0;
 
     // start with a list of clusters consisting of single visits...
@@ -89,13 +96,13 @@ export default Ember.Component.extend({
     return clusters;
   }),
 
-  ongoingVisits: Ember.computed.filter('visits', function (visit) {
+  ongoingVisits: filter('visits', function (visit) {
     return typeof visit.get('tabIndex') === "number";
   }),
 
-  hasOngoingVisits: Ember.computed.gt('ongoingVisits.length', 0),
+  hasOngoingVisits: gt('ongoingVisits.length', 0),
 
-  hasNoSortedVisits: Ember.computed.equal('sortedVisits.length', 0),
+  hasNoSortedVisits: equal('sortedVisits.length', 0),
 
   actions: {
     deleteSession() {

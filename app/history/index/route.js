@@ -1,7 +1,9 @@
 /*eslint no-console: ["error", { allow: ["warn", "error"] }] */
-import Ember from "ember";
+import ArrayProxy from '@ember/array/proxy';
+import Route from '@ember/routing/route';
+import { inject } from '@ember/service';
 
-const VisitsProxy = Ember.ArrayProxy.extend({
+const VisitsProxy = ArrayProxy.extend({
   setup: function () {
     this.setProperties({
       isLoading: false,
@@ -46,9 +48,9 @@ const VisitsProxy = Ember.ArrayProxy.extend({
   },
 });
 
-export default Ember.Route.extend({
-  historySync: Ember.inject.service('history-sync'),
-  cliqz: Ember.inject.service(),
+export default Route.extend({
+  historySync: inject('history-sync'),
+  cliqz: inject(),
 
   queryParams: {
     query: {
